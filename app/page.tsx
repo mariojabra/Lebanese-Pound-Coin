@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ConnectButton, ClaimButton, useActiveAccount } from "thirdweb/react";
 import { createThirdwebClient } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
@@ -44,13 +45,24 @@ export default function Page() {
         </div>
 
         <div style={styles.header}>
-          <div>
-            <h1 style={styles.title}>LBP Coin on Arc Network Marketplace</h1>
-            <p style={styles.subtitle}>
-              A Lebanese-themed digital marketplace on Arc Network. Claim LBP
-              every 24 hours and use it to mint NFTs, collectibles, and future
-              community assets.
-            </p>
+          <div style={styles.brandSection}>
+            <Image
+              src="/lbp-logo.png"
+              alt="LBP Coin Logo"
+              width={76}
+              height={76}
+              style={styles.logo}
+              priority
+            />
+
+            <div>
+              <h1 style={styles.title}>LBP Coin on Arc Network Marketplace</h1>
+              <p style={styles.subtitle}>
+                A Lebanese-themed digital marketplace on Arc Network. Claim LBP
+                every 24 hours and use it to mint NFTs, collectibles, and future
+                community assets.
+              </p>
+            </div>
           </div>
 
           <ConnectButton client={client} chain={arcTestnet} />
@@ -66,12 +78,22 @@ export default function Page() {
       </div>
 
       <section style={styles.coinSection}>
-        <div>
-          <h2 style={styles.sectionTitle}>🇱🇧 Lebanese Pound Coin</h2>
-          <p style={styles.coinText}>
-            Claim 1,000 LBP once every 24 hours. LBP is used inside this
-            marketplace to mint community assets.
-          </p>
+        <div style={styles.coinHeader}>
+          <Image
+            src="/lbp-logo.png"
+            alt="Lebanese Pound Coin"
+            width={48}
+            height={48}
+            style={styles.smallLogo}
+          />
+
+          <div>
+            <h2 style={styles.sectionTitle}>Lebanese Pound Coin</h2>
+            <p style={styles.coinText}>
+              Claim 1,000 LBP once every 24 hours. LBP is used inside this
+              marketplace to mint community assets.
+            </p>
+          </div>
         </div>
 
         <ClaimButton
@@ -111,10 +133,12 @@ export default function Page() {
             <strong>Network</strong>
             <span>Arc Testnet</span>
           </div>
+
           <div style={styles.statCard}>
             <strong>Token</strong>
             <span>Lebanese Pound Coin</span>
           </div>
+
           <div style={styles.statCard}>
             <strong>Claim</strong>
             <span>1,000 LBP / 24h</span>
@@ -162,11 +186,37 @@ export default function Page() {
         </section>
       ))}
 
+      <section style={styles.contractSection}>
+        <h2 style={styles.sectionTitle}>Official Contracts</h2>
+
+        <div style={styles.contractGrid}>
+          <a
+            style={styles.contractCard}
+            href={`https://testnet.arcscan.app/address/${LBP_COIN_ADDRESS}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <strong>LBP Coin Contract</strong>
+            <span>{LBP_COIN_ADDRESS}</span>
+          </a>
+
+          <a
+            style={styles.contractCard}
+            href={`https://testnet.arcscan.app/address/${CHURCH_NFT_ADDRESS}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <strong>Church NFT Contract</strong>
+            <span>{CHURCH_NFT_ADDRESS}</span>
+          </a>
+        </div>
+      </section>
+
       <section style={styles.contactSection}>
         <h2 style={styles.sectionTitle}>Contact Us</h2>
         <p style={styles.contactText}>
-          For partnerships, marketplace listings, or community questions, contact
-          the LBP Coin team.
+          For partnerships, marketplace listings, or community questions,
+          contact the LBP Coin team.
         </p>
 
         <a style={styles.emailButton} href="mailto:mgjabra@gmail.com">
@@ -230,6 +280,25 @@ const styles: Record<string, React.CSSProperties> = {
     justifyContent: "space-between",
     alignItems: "center",
     gap: 20,
+    flexWrap: "wrap",
+  },
+
+  brandSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+  },
+
+  logo: {
+    borderRadius: "50%",
+    border: "2px solid #333",
+    background: "#111",
+  },
+
+  smallLogo: {
+    borderRadius: "50%",
+    border: "1px solid #333",
+    background: "#111",
   },
 
   title: {
@@ -271,6 +340,12 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 16,
     padding: 20,
     marginBottom: 28,
+  },
+
+  coinHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
   },
 
   aboutSection: {
@@ -375,6 +450,33 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: 8,
     fontWeight: "bold",
     cursor: "pointer",
+  },
+
+  contractSection: {
+    border: "1px solid #222",
+    background: "#0f0f0f",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 32,
+  },
+
+  contractGrid: {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    gap: 12,
+  },
+
+  contractCard: {
+    border: "1px solid #333",
+    background: "#151515",
+    borderRadius: 12,
+    padding: 14,
+    color: "white",
+    textDecoration: "none",
+    display: "flex",
+    flexDirection: "column",
+    gap: 8,
+    overflowWrap: "break-word",
   },
 
   contactSection: {
