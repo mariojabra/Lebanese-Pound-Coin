@@ -54,7 +54,7 @@ export default function Page() {
       const tx = prepareContractCall({
         contract: churchNFTContract,
         method: "function claimTo(address _to, uint256 _quantity)",
-        params: [account.address, BigInt(1)],,
+        params: [account.address, BigInt(1)],
       });
 
       await sendTransaction({
