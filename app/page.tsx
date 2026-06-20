@@ -194,7 +194,7 @@ export default function Page() {
             <div>
               <h1 style={styles.title}>LBP Coin on Arc Network Marketplace</h1>
               <p style={styles.subtitle}>
-                Claim LBP, stake LBPC, and use it to mint NFTs and digital
+                Claim LBPC, stake LBPC, and use it to mint NFTs and digital
                 collectibles on Arc Network.
               </p>
             </div>
@@ -213,7 +213,7 @@ export default function Page() {
               {tab === "about"
                 ? "About"
                 : tab === "claim"
-                ? "Claim LBP"
+                ? "Claim LBPC"
                 : tab === "stake"
                 ? "Stake LBPC"
                 : "Marketplace"}
@@ -235,7 +235,7 @@ export default function Page() {
             <h2 style={styles.sectionTitle}>About LBP Coin</h2>
             <p style={styles.aboutText}>
               Lebanese Pound Coin is a community digital asset built on Arc
-              Network. Users can claim LBP, stake LBPC for testnet reward
+              Network. Users can claim LBPC, stake LBPC for testnet reward
               emissions, and use LBP inside the marketplace to mint NFTs and
               future digital collectibles.
             </p>
