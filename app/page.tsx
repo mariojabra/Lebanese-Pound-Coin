@@ -47,7 +47,7 @@ export default function Page() {
         <div style={styles.header}>
           <div style={styles.brandSection}>
             <Image
-              src="/lbp-logo.png"
+              src="/lbp-logov2.png"
               alt="LBP Coin Logo"
               width={76}
               height={76}
@@ -80,7 +80,7 @@ export default function Page() {
       <section style={styles.coinSection}>
         <div style={styles.coinHeader}>
           <Image
-            src="/lbp-logo.png"
+            src="/lbp-logov2.png"
             alt="Lebanese Pound Coin"
             width={48}
             height={48}

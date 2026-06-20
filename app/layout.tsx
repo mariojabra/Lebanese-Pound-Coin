@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Claim Lebanese Pound Coin on Arc Network and use LBP to mint NFTs and community assets.",
   icons: {
-    icon: "/lbp-logo.png",
+    icon: "/lbp-logov2.png",
   },
 };
 
