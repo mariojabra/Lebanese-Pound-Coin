@@ -103,36 +103,25 @@ export default function Page() {
 <ClaimButton
   client={client}
   chain={arcTestnet}
-  contractAddress={LEBANESE_POUND_COIN_ADDRESS}
+  contractAddress="0xb3A3d9F98CC050D56f4325C86A46152fba6f599f"
   claimParams={{
-    type: "ERC20",
-    quantityInWei: BigInt(1000) * BigInt(10) ** BigInt(18),
+    type: "ERC721",
+    quantity: BigInt(1),
   }}
   onTransactionSent={() => {
-    setStatus("Transaction sent. Waiting for confirmation...");
+    setStatus(`Minting ${church.name}...`);
   }}
-  onTransactionConfirmed={(receipt) => {
-    console.log("Confirmed:", receipt);
-    setStatus("Lebanese Pound Coin collected successfully");
+  onTransactionConfirmed={() => {
+    setStatus(`${church.name} minted successfully`);
   }}
   onError={(err) => {
-    const message = err?.message || "";
-
-    if (
-      message.includes("User rejected") ||
-      message.includes("rejected") ||
-      message.includes("denied")
-    ) {
-      setStatus("Transaction was cancelled");
-      return;
-    }
-
-    setStatus("Transaction submitted. Check MetaMask or your wallet activity.");
+    setStatus(err?.message || "NFT mint failed");
   }}
-  style={styles.coinButton}
+  style={styles.button}
 >
-  Collect 1,000 Lebanese Pound Coin
+  Mint {church.name}
 </ClaimButton>
+
       </section>
 
       <h2 style={styles.sectionTitle}>Church Collection</h2>
