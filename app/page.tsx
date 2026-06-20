@@ -54,7 +54,7 @@ export default function Page() {
       const tx = prepareContractCall({
         contract: churchNFTContract,
         method: "function claimTo(address _to, uint256 _quantity)",
-        params: [account.address, 1n],
+        params: [account.address, BigInt(1)],,
       });
 
       await sendTransaction({
@@ -106,7 +106,7 @@ export default function Page() {
   contractAddress={LEBANESE_POUND_COIN_ADDRESS}
   claimParams={{
     type: "ERC20",
-    quantityInWei: 1000n * 10n ** 18n,
+    quantityInWei: BigInt(1000) * BigInt(10) ** BigInt(18),
   }}
   onTransactionSent={() => {
     setStatus("Transaction sent. Waiting for confirmation...");
