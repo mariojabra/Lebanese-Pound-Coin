@@ -75,9 +75,9 @@ export default function Page() {
     <main style={styles.page}>
       <div style={styles.header}>
         <div>
-          <h1 style={styles.title}>Arc Catholic Church NFT</h1>
+          <h1 style={styles.title}>LBP Coin on USDC Network Marketplace</h1>
           <p style={styles.subtitle}>
-            Mint a Catholic Church NFT and collect Lebanese Pound Coin on Arc
+            Claim Lebanese Pound Coin on Arc Network and use it to Mint Contracts
             Testnet
           </p>
         </div>
