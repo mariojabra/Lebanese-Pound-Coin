@@ -1,17 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ConnectButton,
-  ClaimButton,
-  useActiveAccount,
-} from "thirdweb/react";
-import {
-  createThirdwebClient,
-  getContract,
-  prepareContractCall,
-  sendTransaction,
-} from "thirdweb";
+import { ConnectButton, ClaimButton, useActiveAccount } from "thirdweb/react";
+import { createThirdwebClient } from "thirdweb";
 import { defineChain } from "thirdweb/chains";
 
 const client = createThirdwebClient({
@@ -20,65 +11,37 @@ const client = createThirdwebClient({
 
 const arcTestnet = defineChain(5042002);
 
-const churchNFTContract = getContract({
-  client,
-  chain: arcTestnet,
-  address: "0xb3A3d9F98CC050D56f4325C86A46152fba6f599f",
-});
+const LBP_COIN_ADDRESS = "0x900AfE961d723c8159841530Cf794030E2A6Ff62";
+const CHURCH_NFT_ADDRESS = "0xb3A3d9F98CC050D56f4325C86A46152fba6f599f";
 
-const LEBANESE_POUND_COIN_ADDRESS =
-  "0x900AfE961d723c8159841530Cf794030E2A6Ff62";
+const ONE_THOUSAND_LBP_WEI = BigInt(1000) * BigInt(10) ** BigInt(18);
 
-const CHURCHES = Array.from({ length: 18 }).map((_, i) => ({
-  id: i,
-  name: `Church ${i + 1}`,
-  description: `Catholic Church #${i + 1}`,
-}));
+const CATEGORIES = [
+  {
+    title: "Catholic Church NFTs",
+    description: "Mint collectible Catholic Church NFTs using LBP Coin.",
+    items: Array.from({ length: 18 }).map((_, i) => ({
+      id: i,
+      name: `Church ${i + 1}`,
+      description: `Catholic Church #${i + 1}`,
+      contractAddress: CHURCH_NFT_ADDRESS,
+      type: "ERC721" as const,
+    })),
+  },
+];
 
 export default function Page() {
   const account = useActiveAccount();
-
   const [status, setStatus] = useState("");
-  const [loadingId, setLoadingId] = useState<number | null>(null);
-
-  const mintNFT = async (churchId: number) => {
-    try {
-      if (!account?.address) {
-        setStatus("Connect wallet first");
-        return;
-      }
-
-      setLoadingId(churchId);
-      setStatus(`Minting Church ${churchId + 1} NFT...`);
-
-      const tx = prepareContractCall({
-        contract: churchNFTContract,
-        method: "function claimTo(address _to, uint256 _quantity)",
-        params: [account.address, BigInt(1)],
-      });
-
-      await sendTransaction({
-        transaction: tx,
-        account,
-      });
-
-      setStatus(`Church ${churchId + 1} NFT mint successful`);
-    } catch (err: any) {
-      console.error(err);
-      setStatus(err?.message || "NFT mint failed");
-    } finally {
-      setLoadingId(null);
-    }
-  };
 
   return (
     <main style={styles.page}>
       <div style={styles.header}>
         <div>
-          <h1 style={styles.title}>LBP Coin on USDC Network Marketplace</h1>
+          <h1 style={styles.title}>LBP Coin on Arc Network Marketplace</h1>
           <p style={styles.subtitle}>
-            Claim Lebanese Pound Coin on Arc Network and use it to Mint Contracts
-            Testnet
+            Claim Lebanese Pound Coin once every 24 hours and use LBP to mint
+            NFTs and community assets on Arc Network.
           </p>
         </div>
 
@@ -97,61 +60,72 @@ export default function Page() {
         <h2 style={styles.sectionTitle}>Lebanese Pound Coin</h2>
 
         <p style={styles.coinText}>
-          There is available supply for visitors to collect Lebanese Pound Coin.
+          Claim 1,000 LBP once every 24 hours. You can use LBP to mint items in
+          this marketplace.
         </p>
 
-<ClaimButton
-  client={client}
-  chain={arcTestnet}
-  contractAddress="0xb3A3d9F98CC050D56f4325C86A46152fba6f599f"
-  claimParams={{
-    type: "ERC721",
-    quantity: BigInt(1),
-  }}
-  onTransactionSent={() => {
-    setStatus(`Minting ${church.name}...`);
-  }}
-  onTransactionConfirmed={() => {
-    setStatus(`${church.name} minted successfully`);
-  }}
-  onError={(err) => {
-    setStatus(err?.message || "NFT mint failed");
-  }}
-  style={styles.button}
->
-  Mint {church.name}
-</ClaimButton>
-
+        <ClaimButton
+          client={client}
+          chain={arcTestnet}
+          contractAddress={LBP_COIN_ADDRESS}
+          claimParams={{
+            type: "ERC20",
+            quantityInWei: ONE_THOUSAND_LBP_WEI,
+          }}
+          onTransactionSent={() => {
+            setStatus("Claiming LBP. Waiting for confirmation...");
+          }}
+          onTransactionConfirmed={() => {
+            setStatus("LBP claimed successfully");
+          }}
+          onError={(err) => {
+            setStatus(err?.message || "LBP claim failed");
+          }}
+          style={styles.coinButton}
+        >
+          Claim 1,000 LBP
+        </ClaimButton>
       </section>
 
-      <h2 style={styles.sectionTitle}>Church Collection</h2>
+      {CATEGORIES.map((category) => (
+        <section key={category.title} style={styles.categorySection}>
+          <h2 style={styles.sectionTitle}>{category.title}</h2>
+          <p style={styles.categoryDescription}>{category.description}</p>
 
-      <div style={styles.grid}>
-        {CHURCHES.map((church) => {
-          const isLoading = loadingId === church.id;
+          <div style={styles.grid}>
+            {category.items.map((item) => (
+              <div key={item.id} style={styles.card}>
+                <div style={styles.imagePlaceholder}>✝️</div>
 
-          return (
-            <div key={church.id} style={styles.card}>
-              <div style={styles.imagePlaceholder}>✝️</div>
+                <h3 style={styles.cardTitle}>{item.name}</h3>
+                <p style={styles.cardDescription}>{item.description}</p>
 
-              <h3 style={styles.cardTitle}>{church.name}</h3>
-              <p style={styles.cardDescription}>{church.description}</p>
-
-              <button
-                onClick={() => mintNFT(church.id)}
-                disabled={loadingId !== null}
-                style={{
-                  ...styles.button,
-                  opacity: loadingId !== null ? 0.6 : 1,
-                  cursor: loadingId !== null ? "not-allowed" : "pointer",
-                }}
-              >
-                {isLoading ? "Minting..." : `Mint ${church.name}`}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+                <ClaimButton
+                  client={client}
+                  chain={arcTestnet}
+                  contractAddress={item.contractAddress}
+                  claimParams={{
+                    type: item.type,
+                    quantity: BigInt(1),
+                  }}
+                  onTransactionSent={() => {
+                    setStatus(`Minting ${item.name}...`);
+                  }}
+                  onTransactionConfirmed={() => {
+                    setStatus(`${item.name} minted successfully`);
+                  }}
+                  onError={(err) => {
+                    setStatus(err?.message || "NFT mint failed");
+                  }}
+                  style={styles.button}
+                >
+                  Mint with LBP
+                </ClaimButton>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
     </main>
   );
 }
@@ -175,12 +149,14 @@ const styles: Record<string, React.CSSProperties> = {
 
   title: {
     margin: 0,
-    fontSize: 32,
+    fontSize: 34,
   },
 
   subtitle: {
-    marginTop: 6,
+    marginTop: 8,
     opacity: 0.75,
+    maxWidth: 720,
+    lineHeight: 1.5,
   },
 
   infoBox: {
@@ -208,16 +184,25 @@ const styles: Record<string, React.CSSProperties> = {
     background: "#111",
     borderRadius: 12,
     padding: 18,
-    marginBottom: 28,
+    marginBottom: 32,
+  },
+
+  categorySection: {
+    marginBottom: 36,
   },
 
   sectionTitle: {
-    marginBottom: 12,
+    marginBottom: 10,
   },
 
   coinText: {
     opacity: 0.75,
     marginBottom: 14,
+  },
+
+  categoryDescription: {
+    opacity: 0.7,
+    marginBottom: 16,
   },
 
   coinButton: {
@@ -272,5 +257,6 @@ const styles: Record<string, React.CSSProperties> = {
     color: "white",
     borderRadius: 8,
     fontWeight: "bold",
+    cursor: "pointer",
   },
 };
