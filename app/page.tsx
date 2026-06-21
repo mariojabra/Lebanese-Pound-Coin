@@ -35,6 +35,16 @@ const CHAINS = {
 
 const CHURCH_NFT_ADDRESS = "0xb3A3d9F98CC050D56f4325C86A46152fba6f599f";
 const CONTACT_EMAIL = "management@lbpcoin.com";
+
+const INFRASTRUCTURE_WALLET =
+  "0x5c8E10118B5838840490d5717b9a731186DE4bea";
+const TEAM_WALLET =
+  "0xa2Fb6B6fDd9c52D20e2dCD1e0213AA4ec3060369";
+const TREASURY_WALLET =
+  "0xbdE2A6f270FA708C9EfdFC6CfF6ab03e7E722820";
+const COMMUNITY_WALLET =
+  "0x7FfFb9FC0Cb524689544Ad42251ab339b7620330";
+
 const ONE_THOUSAND_LBPC_WEI = BigInt(1000) * BigInt(10) ** BigInt(18);
 
 const CHURCHES = Array.from({ length: 18 }).map((_, i) => ({
@@ -67,7 +77,7 @@ export default function Page() {
   const [stakeAmount, setStakeAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [activeTab, setActiveTab] = useState<
-    "about" | "claim" | "stake" | "marketplace"
+    "about" | "claim" | "stake" | "marketplace" | "tokenomics"
   >("about");
 
   const [stats, setStats] = useState({
@@ -96,7 +106,10 @@ export default function Page() {
     const whole = value / BigInt(10) ** BigInt(18);
     const decimal = value % (BigInt(10) ** BigInt(18));
     const decimalText = decimal.toString().padStart(18, "0").slice(0, 4);
-    return `${whole.toLocaleString()}${decimalText !== "0000" ? "." + decimalText : ""}`;
+
+    return `${whole.toLocaleString()}${
+      decimalText !== "0000" ? "." + decimalText : ""
+    }`;
   };
 
   const loadStats = async () => {
@@ -168,7 +181,7 @@ export default function Page() {
       setStatus(`Stats refreshed on ${selectedChain.name}`);
     } catch (err: any) {
       console.error(err);
-      setStatus("Could not load stats. Check wallet network and contract addresses.");
+      setStatus("Could not load stats. Check network and contract addresses.");
     }
   };
 
@@ -296,9 +309,8 @@ export default function Page() {
             <div>
               <h1 style={styles.title}>LBPC Marketplace & Staking</h1>
               <p style={styles.subtitle}>
-                Claim, stake, and use LBPC across supported networks. Currently
-                live on Arc Testnet and Ethereum Sepolia, with Ethereum mainnet
-                and XRPL expansion planned.
+                Claim, stake, and use LBPC across supported networks. Drops are
+                funded through the Community Distribution allocation.
               </p>
             </div>
           </div>
@@ -319,21 +331,25 @@ export default function Page() {
         </div>
 
         <div style={styles.tabs}>
-          {(["about", "claim", "stake", "marketplace"] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={activeTab === tab ? styles.activeTab : styles.tab}
-            >
-              {tab === "about"
-                ? "About"
-                : tab === "claim"
-                ? "Claim LBPC"
-                : tab === "stake"
-                ? "Stake LBPC"
-                : "Marketplace"}
-            </button>
-          ))}
+          {(["about", "claim", "stake", "marketplace", "tokenomics"] as const).map(
+            (tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={activeTab === tab ? styles.activeTab : styles.tab}
+              >
+                {tab === "about"
+                  ? "About"
+                  : tab === "claim"
+                  ? "Claim LBPC"
+                  : tab === "stake"
+                  ? "Stake LBPC"
+                  : tab === "marketplace"
+                  ? "Marketplace"
+                  : "Tokenomics"}
+              </button>
+            )
+          )}
         </div>
       </section>
 
@@ -389,7 +405,8 @@ export default function Page() {
             <h2 style={styles.sectionTitle}>About LBPC</h2>
             <p style={styles.aboutText}>
               LBPC is a community digital asset built for marketplace utility,
-              staking rewards, and future cross-chain expansion.
+              staking rewards, community distribution, and future cross-chain
+              expansion.
             </p>
             <p style={styles.aboutText}>
               The project is currently active on Arc Testnet and Ethereum
@@ -413,7 +430,7 @@ export default function Page() {
 
               <div style={styles.roadmapCard}>
                 <h3>Next: Ethereum Mainnet</h3>
-                <p>Mainnet ERC20 deployment after testing.</p>
+                <p>Mainnet ERC20 deployment after testing and review.</p>
               </div>
 
               <div style={styles.roadmapCard}>
@@ -429,8 +446,22 @@ export default function Page() {
         <section style={styles.coinSection}>
           <h2 style={styles.sectionTitle}>Claim LBPC</h2>
           <p style={styles.coinText}>
-            Claim 1,000 LBPC on the selected network if claim conditions are active.
+            Claim 1,000 LBPC from the Community Distribution allocation. Claims
+            are funded by the Community Wallet and intended to support ecosystem
+            growth, staking participation, and marketplace adoption.
           </p>
+
+          <div style={styles.statGrid}>
+            <div style={styles.statCard}>
+              <strong>Drop Funding Source</strong>
+              <span>Community Distribution Wallet</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Community Wallet</strong>
+              <span style={styles.breakText}>{COMMUNITY_WALLET}</span>
+            </div>
+          </div>
 
           <ClaimButton
             client={client}
@@ -458,8 +489,8 @@ export default function Page() {
           <h2 style={styles.sectionTitle}>Stake LBPC</h2>
 
           <p style={styles.coinText}>
-            Stake LBPC to earn reward emissions. Rewards depend on funding in
-            the selected staking contract.
+            Stake LBPC to earn reward emissions. Rewards depend on available
+            funding in the selected staking contract.
           </p>
 
           <div style={styles.formBox}>
@@ -499,6 +530,8 @@ export default function Page() {
           <h2 style={styles.sectionTitle}>Marketplace</h2>
           <p style={styles.categoryDescription}>
             Use LBPC to mint digital collectibles. More collections are planned.
+            Marketplace proceeds are intended to support treasury growth,
+            infrastructure, and community incentives.
           </p>
 
           <div style={styles.grid}>
@@ -531,6 +564,112 @@ export default function Page() {
         </section>
       )}
 
+      {activeTab === "tokenomics" && (
+        <section style={styles.tokenomicsSection}>
+          <h2 style={styles.sectionTitle}>LBPC Tokenomics</h2>
+
+          <p style={styles.aboutText}>
+            LBPC uses a fixed-supply allocation model designed for transparency,
+            ecosystem growth, marketplace utility, and long-term development.
+          </p>
+
+          <div style={styles.statGrid}>
+            <div style={styles.statCard}>
+              <strong>Maximum Supply</strong>
+              <span>1,000,000,000 LBPC</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Developers</strong>
+              <span>20% / 200,000,000 LBPC</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Infrastructure</strong>
+              <span>40% / 400,000,000 LBPC</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Community + Drops</strong>
+              <span>40% / 400,000,000 LBPC</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Developer Vesting</strong>
+              <span>12-month cliff + 48-month vesting target</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>NFT Utility</strong>
+              <span>NFT minting paid in LBPC</span>
+            </div>
+          </div>
+
+          <h2 style={styles.sectionTitle}>Treasury & Distribution Wallets</h2>
+
+          <div style={styles.statGrid}>
+            <div style={styles.statCard}>
+              <strong>Infrastructure Wallet</strong>
+              <span style={styles.breakText}>{INFRASTRUCTURE_WALLET}</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Team Wallet</strong>
+              <span style={styles.breakText}>{TEAM_WALLET}</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Treasury Wallet</strong>
+              <span style={styles.breakText}>{TREASURY_WALLET}</span>
+            </div>
+
+            <div style={styles.statCard}>
+              <strong>Community Wallet</strong>
+              <span style={styles.breakText}>{COMMUNITY_WALLET}</span>
+            </div>
+          </div>
+
+          <div style={styles.roadmapGrid}>
+            <div style={styles.roadmapCard}>
+              <h3>20% Developers</h3>
+              <p>
+                Reserved for core development, security maintenance, product
+                work, and long-term team incentives.
+              </p>
+            </div>
+
+            <div style={styles.roadmapCard}>
+              <h3>40% Infrastructure</h3>
+              <p>
+                Reserved for audits, legal, compliance, infrastructure,
+                listings, partnerships, and ecosystem development.
+              </p>
+            </div>
+
+            <div style={styles.roadmapCard}>
+              <h3>40% Community</h3>
+              <p>
+                Reserved for drops, staking rewards, marketplace incentives,
+                liquidity, and exchange ecosystem distribution.
+              </p>
+            </div>
+
+            <div style={styles.roadmapCard}>
+              <h3>Drop Flow</h3>
+              <p>
+                Treasury funds Community Wallet. Community Wallet funds claim
+                contracts and ecosystem rewards.
+              </p>
+            </div>
+          </div>
+
+          <p style={styles.disclaimer}>
+            LBPC is an experimental community digital asset. It is not equity,
+            debt, profit sharing, or an official currency product.
+          </p>
+        </section>
+      )}
+
       <section style={styles.contractSection}>
         <h2 style={styles.sectionTitle}>Official Contracts</h2>
 
@@ -553,6 +692,16 @@ export default function Page() {
           >
             <strong>LBPC Staking Contract</strong>
             <span>{selectedChain.stakingAddress}</span>
+          </a>
+
+          <a
+            style={styles.contractCard}
+            href={`${selectedChain.explorer}${COMMUNITY_WALLET}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <strong>Community Distribution Wallet</strong>
+            <span>{COMMUNITY_WALLET}</span>
           </a>
         </div>
       </section>
@@ -603,7 +752,7 @@ const styles: Record<string, React.CSSProperties> = {
   aboutSection: { border: "1px solid #222", background: "#0f0f0f", borderRadius: 16, padding: 22, marginBottom: 32 },
   tokenomicsSection: { border: "1px solid #222", background: "#0f0f0f", borderRadius: 16, padding: 22, marginBottom: 32 },
   roadmapSection: { border: "1px solid #222", background: "#0f0f0f", borderRadius: 16, padding: 22, marginBottom: 32 },
-  roadmapGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 },
+  roadmapGrid: { display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12, marginTop: 18 },
   roadmapCard: { border: "1px solid #333", background: "#151515", borderRadius: 12, padding: 16 },
   sectionTitle: { marginBottom: 10 },
   coinText: { opacity: 0.75, marginBottom: 16 },
@@ -631,4 +780,5 @@ const styles: Record<string, React.CSSProperties> = {
   emailButton: { display: "inline-block", padding: "11px 14px", background: "#991b1b", color: "white", borderRadius: 10, textDecoration: "none", fontWeight: "bold" },
   footer: { marginTop: 28, paddingTop: 18, borderTop: "1px solid #222", opacity: 0.75, lineHeight: 1.5 },
   disclaimer: { fontSize: 13, opacity: 0.65, maxWidth: 900 },
+  breakText: { overflowWrap: "break-word", fontSize: 12 },
 };
